@@ -52,9 +52,9 @@ dojo.declare(
 	// 	|		widget.addChild(cpane3, 2, 1);
 	// 	|		widget.startup();
 	// 	|	});
-	
+
 	//	autoRefresh: Boolean
-	//		Enable the refresh of registered areas on drag start. 
+	//		Enable the refresh of registered areas on drag start.
 	autoRefresh: true,
 
 
@@ -82,7 +82,7 @@ dojo.declare(
 	// acceptTypes: Array
 	//		The GridContainer will only accept the children that fit to the types.
 	acceptTypes: [],
-	
+
 	// colWidths: String
 	//		A comma separated list of column widths. If the column widths do not add up
 	//		to 100, the remaining columns split the rest of the width evenly
@@ -177,7 +177,7 @@ dojo.declare(
 
 			// Update the column of the widget
 			widget.set("column", node.parentNode.cellIndex);
-			
+
 			if(this.doLayout){
 				var domNodeHeight = this._contentBox.h,
 					divHeight = dojo.contentBox(this.gridContainerDiv).h;
@@ -190,6 +190,24 @@ dojo.declare(
 		}
 		return false;
 	},
+
+    getWidgetPosition: function(/*Object*/ widget) {
+        // summary:
+        //     Returns the position of the widget in the grid.
+        //     "Position" means position in the column the widget is in.
+        //     To find out which column it is, use widget.column
+        // widget:
+        //     The widget
+        var dropZone = this._grid[widget.column];
+        var position = -1;
+        dojo.forEach(dropZone.node.children, function(childNode, index) {
+            if (childNode == widget.domNode) {
+                position = index;
+            }
+        });
+
+        return position;
+    },
 
 	resizeChildAfterDragStart: function(/*Node*/node, /*Object*/sourceArea, /*Integer*/indexChild){
 		// summary:
@@ -303,12 +321,12 @@ dojo.declare(
 		if(this.nbZones === 0){ this.nbZones = 1; }
 		var accept = this.acceptTypes.join(","),
 			i = 0;
-			
+
 		var origWidths = this.colWidths || [];
 		var widths = [];
 		var colWidth;
 		var widthSum = 0;
-		
+
 		// Calculate the widths of each column.
 		for(i = 0; i < this.nbZones; i++){
 			if(widths.length < origWidths.length){
@@ -325,7 +343,7 @@ dojo.declare(
 		i = 0;
 		while(i < this.nbZones){
 			// Add the parameter accept in each zone used by AreaManager
-			// (see method dojox.mdnd.AreaManager:registerByNode)			
+			// (see method dojox.mdnd.AreaManager:registerByNode)
 			this._grid.push({
 				'node': dojo.create("td", {
 					'class': "gridContainerZone",
@@ -339,10 +357,10 @@ dojo.declare(
 			i++;
 		}
 	},
-	
+
 	_getZonesAttr: function(){
 		// summary:
-		//   return array of zone (domNode) 
+		//   return array of zone (domNode)
 		return dojo.query(".gridContainerZone",  this.containerNode);
 	},
 
@@ -497,15 +515,15 @@ dojo.declare(
 		}
 		return null; 	// Widget
 	},
-	
+
 	_setColWidthsAttr: function(value){
 		this.colWidths = dojo.isString(value) ? value.split(",") : (dojo.isArray(value) ? value : [value]);
-		
-		if(this._started){ 
+
+		if(this._started){
 			this._updateColumnsWidth();
 		}
 	},
-	
+
 	_updateColumnsWidth: function(/*Object*/ manager){
 		// summary:
 		//		Update the columns width.
@@ -531,7 +549,7 @@ dojo.declare(
 			}else{
 				if(!colWidth){
 					colWidth = (100 - widthSum)/(this.nbZones - i);
-					
+
 					// If the numbers don't work out, make the remaining columns
 					// an even width and let the code below average
 					// out the differences.
