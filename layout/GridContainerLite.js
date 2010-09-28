@@ -199,10 +199,14 @@ dojo.declare(
         // widget:
         //     The widget
         var dropZone = this._grid[widget.column];
-        var position = -1;
+        var position = {
+            x: null,
+            y: null
+        };
         dojo.forEach(dropZone.node.children, function(childNode, index) {
             if (childNode == widget.domNode) {
-                position = index;
+                position['x'] = widget.column;
+                position['y'] = index;
             }
         });
 
